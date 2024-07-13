@@ -35,41 +35,6 @@ const MainIdTidPage = ({ params }: { params: { tid: string } }) => {
   const [comment, setComment] = useState<string>("");
   const [deleted, setDeleted] = useState<boolean>(false);
   const [unknown, setUnknown] = useState<boolean>(false);
-  // const addComment = async () => {
-  //   if (comment === "") toast.error("내용을 입력해주세요.");
-  //   const result = await fetch(`/api/v1/comments`, {
-  //     method: "POST",
-  //     body: JSON.stringify({
-  //       t_id: params.tid,
-  //       c_content: comment,
-  //     }),
-  //   });
-  //   const res = await result.json();
-  //   if (res.result) {
-  //     toast.success("댓글이 등록되었습니다.", {
-  //       position: "top-right",
-  //     });
-  //     setComment(""); // Reset the input field
-  //     const newComment: t_comments = res.data;
-  //     // 데이터를 갱신한다.
-  //     setThread(
-  //       (prevThread) =>
-  //         ({
-  //           ...prevThread,
-  //           data: {
-  //             ...prevThread?.data,
-  //             t_comments: [
-  //               newComment,
-  //               ...(prevThread?.data?.t_comments as t_comments[]),
-  //             ],
-  //           },
-  //         }) as BasicType<ThreadType>,
-  //     );
-  //     toast.success(JSON.stringify(newComment));
-  //   } else {
-  //     toast.error(res?.data);
-  //   }
-  // };
 
   const addComment = async () => {
     if (comment === "") {

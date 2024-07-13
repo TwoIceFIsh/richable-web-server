@@ -20,7 +20,7 @@ export const saveThreadByCurrentUser = async (data: {
   if (user?.id) {
     await db.thread.create({
       data: {
-        u_id: user.id,
+        u_id: user?.id,
         t_content: data.thread.content,
       },
     });

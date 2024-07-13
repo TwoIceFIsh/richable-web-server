@@ -60,14 +60,14 @@ const Sidebar = ({ handleHomeIconClick }: SidebarProps) => {
             </MenuIcon>
           </div>
           <div className={"flex flex-col items-center justify-center gap-y-4"}>
-            <MenuIcon href={"/house"} onClick={handleHomeIconClick}>
-              <HomeIcon
-                className={cn(
-                  pathName === "/house" ? "text-black" : "",
-                  "h-8 w-8",
-                )}
-              />
-            </MenuIcon>
+            {/*<MenuIcon href={"/house"} onClick={handleHomeIconClick}>*/}
+            {/*  <HomeIcon*/}
+            {/*    className={cn(*/}
+            {/*      pathName === "/house" ? "text-black" : "",*/}
+            {/*      "h-8 w-8",*/}
+            {/*    )}*/}
+            {/*  />*/}
+            {/*</MenuIcon>*/}
             <MenuIcon href={"/"} onClick={handleHomeIconClick}>
               <MessageCircle
                 className={cn(pathName === "/" ? "text-black" : "", "h-8 w-8")}

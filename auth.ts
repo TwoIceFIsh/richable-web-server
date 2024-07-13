@@ -20,6 +20,8 @@ export const {
   },
   callbacks: {
     async session({ token, session }) {
+      if (!session) await signOut();
+
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
