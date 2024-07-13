@@ -1,0 +1,26 @@
+### GET request to example server
+POST http://localhost:3000/api/v1/threads
+Content-Type: application/json
+
+{
+  "take": "3",
+  "page": "0"
+}
+
+### GET request to example server
+POST http://localhost:3000/api/v1/threads
+Content-Type: application/json
+
+{
+  "take": "3",
+  "page": "1"
+}
+
+### GET request to example server
+POST http://localhost:3000/api/v1/threads
+Content-Type: application/json
+
+{
+  "take": "3",
+  "page": "2"
+}

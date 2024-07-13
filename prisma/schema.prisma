@@ -1,0 +1,216 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model ThreadLike {
+  tlike_id    String   @id @default(cuid())
+  User        User     @relation(fields: [u_id], references: [id])
+  u_id        String
+  Thread      Thread   @relation(fields: [t_id], references: [t_id], onDelete: Cascade)
+  t_id        String
+  t_createdAt DateTime @default(now())
+  t_updatedAt DateTime @updatedAt
+
+  @@unique([u_id, t_id])
+}
+
+model User {
+  id                 String       @id @default(cuid())
+  username           String       @default(cuid())
+  name               String       @unique @default(cuid())
+  email              String       @unique
+  emailVerified      DateTime?
+  image              String       @default("https://boring-avatars-api.vercel.app/api/avatar?size=40&variant=marble")
+  Account            Account?
+  group              String       @default("")
+  tag                String       @default("")
+  content            String       @default("")
+  isActivated        Boolean      @default(false)
+  password           String?      @default("")
+  role               UserRole     @default(USER)
+  isTwoFactorEnabled Boolean      @default(false)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  Thread             Thread[]
+  UserLog            UserLog[]
+  ThreadLike         ThreadLike[]
+  Exp                Exp?
+  Follower           Follow[]     @relation("follower")
+  Following          Follow[]     @relation("following")
+  Comments   Comments[]
+  ThreadView ThreadView[]
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  followerId  String // The user who is following
+  followingId String // The user being followed
+  follower    User     @relation("follower", fields: [followerId], references: [id])
+  following   User     @relation("following", fields: [followingId], references: [id])
+
+  @@index([followerId, followingId], name: "idx_follower_following")
+  @@unique([followerId, followingId])
+}
+
+model Exp {
+  id        String    @id @default(cuid())
+  exp       Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @default(now()) @updatedAt
+
+  User   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+
+  Rank   Rank?   @relation(fields: [rankId], references: [id], onDelete: SetNull)
+  rankId String?
+}
+
+model Rank {
+  id        String   @id @default(cuid())
+  name      String   @default("")
+  content   String   @default("")
+  minExp    Int      @default(0)
+  maxExp    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  Exp Exp[]
+}
+
+model Thread {
+  t_id        String       @id @default(cuid())
+  t_content   String       @db.Text
+  t_user      User         @relation(fields: [u_id], references: [id], onDelete: Cascade)
+  u_id        String
+  t_like      ThreadLike[]
+  t_comments  Comments[]
+  t_createdAt DateTime     @default(now())
+  t_updatedAt DateTime     @updatedAt
+
+  t_view ThreadView[]
+}
+
+model Log {
+  id          String        @id @default(cuid())
+  content     String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  UserLog     UserLog[]
+  LogCategory LogCategory[]
+}
+
+model ThreadView {
+  tv_id       String   @id @default(cuid())
+  t_id        String
+  u_id        String
+  t_user      User     @relation(fields: [u_id], references: [id], onDelete: Cascade)
+  t_thread    Thread   @relation(fields: [t_id], references: [t_id], onDelete: Cascade)
+  t_createdAt DateTime @default(now())
+  t_updatedAt DateTime @updatedAt
+}
+
+model Comments {
+  c_id        String   @id @default(cuid())
+  c_content   String   @default("")
+  c_depth     Int      @default(0)
+  c_createdAt DateTime @default(now())
+  c_updatedAt DateTime @updatedAt
+  c_user      User     @relation(fields: [u_id], references: [id], onDelete: Cascade)
+  u_id        String
+  c_thread    Thread   @relation(fields: [t_id], references: [t_id], onDelete: Cascade)
+  t_id        String
+}
+
+model LogCategory {
+  id        String   @id @default(cuid())
+  type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Log       Log?     @relation(fields: [logId], references: [id])
+  logId     String?
+}
+
+model UserLog {
+  id        String   @id @default(cuid())
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  log       Log      @relation(fields: [logId], references: [id], onDelete: Cascade)
+  logId     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String  @unique
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+// model Session {
+//   id           String   @id @default(cuid())
+//   sessionToken String   @unique
+//   userId       String
+//   expires      DateTime
+//   user         User     @relation(fields: [userId], references: [id])
+//
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//
+//   @@index([userId])
+// }
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Optional for WebAuthn support
+// model Authenticator {
+//   credentialID         String  @unique
+//   userId               String
+//   providerAccountId    String
+//   credentialPublicKey  String
+//   counter              Int
+//   credentialDeviceType String
+//   credentialBackedUp   Boolean
+//   transports           String?
+//
+//   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+//
+//   @@id([userId, credentialID])
+// }

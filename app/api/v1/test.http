@@ -1,0 +1,7 @@
+### GET request to example server
+GET http://localhost:3000/api/v1/users/cly7cxsbl0008cekgs7f8eod1
+
+###
+
+###
+POST http://localhost:8080/upload/image
